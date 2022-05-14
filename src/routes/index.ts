@@ -65,10 +65,10 @@ indexRouter.get("/consultarTitulo/:tituloId", async (req: Request, res: Response
         headers: { Authorization: process.env.PROTESTO_API_TOKEN },
       });
 
-      // if (data.situacao !== titulo.responses[titulo.responses.length - 1].situacao) {
-      titulo.responses.push(data);
-      await protestoController.findByIdAndUpdate(tituloId, titulo);
-      // }
+      if (data.situacao !== titulo.responses[titulo.responses.length - 1].situacao) {
+        titulo.responses.push(data);
+        await protestoController.findByIdAndUpdate(tituloId, titulo);
+      }
 
       res.json({ data });
     } catch (error) {
