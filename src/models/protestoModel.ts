@@ -1,3 +1,4 @@
+import { number } from "joi";
 import { model, Schema } from "mongoose";
 
 export interface CredorInterface {
@@ -33,6 +34,7 @@ export interface ImagensInterface {
 }
 
 export interface ProtestoInterface {
+  tituloId: string;
   transactionId: string;
   request: {
     tipo: "DM" | "DS" | "CT" | string;
@@ -56,6 +58,7 @@ const optionalString = { type: String, required: false };
 
 const schema = new Schema<ProtestoInterface>(
   {
+    tituloId: requiredString,
     transactionId: requiredString,
     request: {
       tipo: { enum: ["DM", "DS", "CT"], type: String, required: true },

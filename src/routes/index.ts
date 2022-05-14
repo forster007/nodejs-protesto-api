@@ -31,18 +31,18 @@ indexRouter.post(
   async (req: Request, res: Response) => {
     const transactionId = v4();
 
-    const obj: ProtestoInterface = {
-      transactionId,
-      request: req.body,
-      responses: [],
-    };
-
     try {
       const { data } = await axios.post(`${process.env.PROTESTO_API_URL}/v1/titulo`, req.body, {
         headers: { Authorization: process.env.PROTESTO_API_TOKEN },
       });
 
-      obj.responses = [data];
+      const obj: ProtestoInterface = {
+        tituloId: data.id,
+        transactionId,
+        request: req.body,
+        responses: [data],
+      };
+
       await protestoController.save(obj);
       res.json({
         id: data.id,
@@ -51,32 +51,30 @@ indexRouter.post(
       });
     } catch (error) {
       res.status(400).json({ message: "Erro ao retornar os dados", transactionId });
-      obj.responses = error.response.data;
-      await protestoController.save(obj);
     }
   }
 );
 
-indexRouter.get("/consultarTitulo/:id", async (req: Request, res: Response) => {
-  const { id } = req.params;
-  const titulo = await protestoController.findById({ id: Number(id) });
+indexRouter.get("/consultarTitulo/:tituloId", async (req: Request, res: Response) => {
+  const { tituloId } = req.params;
+  const titulo = await protestoController.findById(tituloId);
 
   if (titulo && Object.keys(titulo).length) {
     try {
-      const { data } = await axios.get(`${process.env.PROTESTO_API_URL}/v1/titulo/${id}`, {
+      const { data } = await axios.get(`${process.env.PROTESTO_API_URL}/v1/titulo/${tituloId}`, {
         headers: { Authorization: process.env.PROTESTO_API_TOKEN },
       });
 
-      if (data.situacao !== titulo.responses[titulo.responses.length - 1].situacao) {
-        titulo.responses.push(data);
-        await protestoController.findByIdAndUpdate({ id: Number(id), update: titulo });
-      }
+      // if (data.situacao !== titulo.responses[titulo.responses.length - 1].situacao) {
+      titulo.responses.push(data);
+      await protestoController.findByIdAndUpdate(tituloId, titulo);
+      // }
 
       res.json({ data });
     } catch (error) {
       res.status(400).json({ message: "Erro ao retornar os dados" });
     }
+  } else {
+    res.status(400).json({ message: "Nenhum titulo cadastrado com esse ID" });
   }
-
-  res.status(400).json({ message: "Nenhum titulo cadastrado com esse ID" });
 });

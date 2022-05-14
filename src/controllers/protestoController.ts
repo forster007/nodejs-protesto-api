@@ -6,12 +6,12 @@ class ProtestoController {
     return newIndex;
   }
 
-  async findById(props: { id: number }): Promise<ProtestoInterface> {
-    return await ProtestoModel.findOne({ "response.id": props.id });
+  async findById(tituloId: string): Promise<ProtestoInterface> {
+    return await ProtestoModel.findOne({ tituloId });
   }
 
-  async findByIdAndUpdate(props: { id: number; update: ProtestoInterface }): Promise<ProtestoInterface> {
-    return await ProtestoModel.findOneAndUpdate({ "response.id": props.id }, props.update);
+  async findByIdAndUpdate(tituloId: string, update: ProtestoInterface): Promise<ProtestoInterface> {
+    return await ProtestoModel.findOneAndUpdate({ tituloId }, update);
   }
 }
 
