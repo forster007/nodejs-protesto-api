@@ -1,4 +1,3 @@
-import { number } from "joi";
 import { model, Schema } from "mongoose";
 
 export interface CredorInterface {
@@ -104,9 +103,10 @@ const schema = new Schema<ProtestoInterface>(
     responses: [],
   },
   {
+    collection: "protesto24",
     id: true,
     timestamps: true,
   }
 );
 
-export const ProtestoModel = model<ProtestoInterface>("ProtestoModel", schema);
+export const ProtestoModel = model<ProtestoInterface>("protesto24", schema);
